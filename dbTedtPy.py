@@ -5,8 +5,9 @@ from tkinter import filedialog as fd
 
 manu = []
 list1= []
+list2= []
 filename = ""
-
+char ="ABCDEFGHIJKLMNOPQRSTUVQXYZ"
 row,column =20,9
 offset = column
 def openf():# open button function
@@ -39,7 +40,7 @@ def openf():# open button function
     
 def saveas():# Save as button function
     global filename
-    f = filedialog.asksaveasfile(mode='w', defaultextension = '.db')
+    f = filedialog.asksaveasfile(mode='w', defaultextension = '.d')
     filename= fd.askopenfilename()
     print(filename)
     if f is None:
@@ -87,6 +88,9 @@ menu.add_cascade(label="help", menu = helpmenu)
 #
 
 #
+for i in range(column):
+    l = Label(root,text = char[i]).grid(row = 0, column =i)
+    
 for i in range(row):
     list1 = []
     for j in range(column):
@@ -95,7 +99,7 @@ for i in range(row):
     
 for i in range(row):
     for j in range(column):
-        manu[i][j].grid(row = i, column = j)
+        manu[i][j].grid(row = i+1, column = j)
 
 
 
