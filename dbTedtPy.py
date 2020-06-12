@@ -15,7 +15,6 @@ def openf():# open button function
     f = filedialog.askopenfile(mode='r')
     if f is None:
         return
-    filename= fd.askopenfilename()
     print(filename)
     list2=[]
     j=0
@@ -26,7 +25,6 @@ def openf():# open button function
         string = ""
         print(text)
         for i in text:
-            print(i)
             if i ==",":
                #list2.append(string)
                manu[k][j].delete(0,END)
@@ -41,7 +39,6 @@ def openf():# open button function
 def saveas():# Save as button function
     global filename
     f = filedialog.asksaveasfile(mode='w', defaultextension = '.d')
-    filename= fd.askopenfilename()
     print(filename)
     if f is None:
         return
@@ -56,30 +53,18 @@ def saveas():# Save as button function
         f.write("\n")
     f.close()
     
-def save():
-    if filename is None:
-        saveas()
-    else:
-        f = open(filename,'w')
-        for i in range(row):
-            for j in range(column):
-                if manu[i][j].get() != "":
-                    f.write(manu[i][j].get()+",")
-                else:
-                    f.write(",")
-            f.write(" ;")
-            f.write("\n")
 
 
 root = Tk()
+root.title("Ptable")
+
+root.geometry("1120x500")
 #menu
 menu = Menu(root)
 root.config(menu=menu)
-
 filemenu = Menu(menu)
 menu.add_cascade(label="File", menu=filemenu)
 filemenu.add_command(label="open", command = openf)
-filemenu.add_command(label="save", command = save)
 filemenu.add_command(label="save as", command = saveas)
 
 helpmenu = Menu(menu)
@@ -89,17 +74,20 @@ menu.add_cascade(label="help", menu = helpmenu)
 
 #
 for i in range(column):
-    l = Label(root,text = char[i]).grid(row = 0, column =i)
+    if i % 2 ==0:
+        l = Label(root,text = char[i], bg = "#dfe6e9",pady = 10, padx = 55).grid(row = 0, column =i ,pady=4)
+    else:
+        l = Label(root,text = char[i], bg = "#b2bec3",pady = 10, padx = 55).grid(row = 0, column =i ,pady=4)
     
 for i in range(row):
     list1 = []
     for j in range(column):
-        list1.append(Entry(root))
+        list1.append(Entry(root,))
     manu.append(list1)
     
 for i in range(row):
     for j in range(column):
-        manu[i][j].grid(row = i+1, column = j)
+        manu[i][j].grid(row = i+1, column = j, ipady=3)
 
 
 
