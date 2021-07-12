@@ -1,3 +1,4 @@
+from os import EX_OSFILE
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
@@ -15,6 +16,7 @@ offset = column
 def openf():# open button function
     global filename
     f = filedialog.askopenfile(mode='r')
+    filename = f.name
     if f is None:
         return
     print(filename)
@@ -40,6 +42,7 @@ def openf():# open button function
 def saveas():# Save as button function
     global filename
     f = filedialog.asksaveasfile(mode='w', defaultextension = '.d')
+    filename = f.name
     if f is None:
         return
     Rows = 0
@@ -52,7 +55,21 @@ def saveas():# Save as button function
         f.write(" ;")
         f.write("\n")
     f.close()
-    
+def save():
+    global filename
+    f = open(filename , "w")
+    if f is None:
+        return
+    Rows = 0
+    for i in range(row):
+        for j in range(column):
+            if manu[i][j].get() != "":
+                f.write(manu[i][j].get()+",")
+            else:
+                f.write(",")
+        f.write(" ;")
+        f.write("\n")
+    f.close()
 def ser():
     on = False
     r = 0
@@ -126,9 +143,9 @@ def min():
 def darkmode():
     global darkOn
     if darkOn == True:
-        for i in range(row):
-            for j in range(column):
-                manu[i][j].config(fg = "#0984e3",bg="#485460")
+        # for i in range(row):
+        #     for j in range(column):
+        #         manu[i][j].config(fg = "#0984e3",bg="#485460")
         for i in range(column):
             l[i].config(bg="#636e72")
         root.config(bg="#d2dae2")
@@ -188,11 +205,25 @@ def autonumber():
 
     j = int(en1.get())
     for i in range(row):
-        manu[i][j].insert(0,i+100) 
+        manu[i][j].insert(0,i+100)
+def command(event):
+    print(event.state)
+    if event.state == 28 and event.keysym == 's':
+        saveas()
+    elif event.state == 20 and event.keysym == "s":
+        save()
+    elif event.state == 20 and event.keysym == 'o':
+        openf()
+
+
+
 root = Tk()
 root.config(bg = "#81ecec")
 root.title("Ptable")
-root.geometry("1280x600")
+root.geometry("1860x800")
+root.bind_all("<Control-Key-s>", command)
+root.bind_all("<Control-Key-o>", command)
+root.bind_all("<Control-Alt-s>", command)
 #menu
 menu = Menu(root)
 root.config(menu=menu)
@@ -200,9 +231,14 @@ filemenu = Menu(menu)
 menu.add_cascade(label="File", menu=filemenu)
 filemenu.add_command(label="open", command = openf)
 filemenu.add_command(label="save as", command = saveas)
+filemenu.add_command(label="save", command = save)
 
 helpmenu = Menu(menu)
 menu.add_cascade(label="help", menu = helpmenu)
+
+editmenu = Menu(menu)
+menu.add_cascade(label="Edit", menu=editmenu)
+editmenu.add_command(label="sum")
 
 #
 
@@ -218,39 +254,42 @@ for i in range(column):
 for i in range(row):
     list1 = []
     for j in range(column):
-        list1.append(Entry(root,bg="white"))
+        en = Entry(root,bg="white")
+        
+        list1.append(en)
     manu.append(list1)
     
 for i in range(row):
     for j in range(column):
         manu[i][j].grid(row = i+1, column = j, ipady=4)
 
-bu = Button(root,text="find max",command = max)
-bu.grid(row = 1, column = column, ipadx = 30)
-min = Button(root,text="find min",command = min)
-min.grid(row = 2, column = column, ipadx = 31)
-bser = Button(root, text = "serach",command = ser)
-bser.grid(row = 3, column = column, ipadx = 37)
-summ = Button(root, text = "find sum", command = sum)
-summ.grid(row = 4, column = column,ipadx = 30)
-count= Button(root,text="find count",command = count)
-count.grid(row = 5, column = column, ipadx = 25)
-store = Button(root,text = "store in", command = store)
-store.grid(row = 6, column = column, ipadx = 32)
-autonum = Button(root,text="AutoNumbring",command = autonumber)
-autonum.grid(row = 7, column = column, ipadx = 10)
-dark = Button(root, text = "DarkMode",command = darkmode)
+wd= 12
+bu = Button(root,text="find max", width=wd,command = max)
+bu.grid(row = 1, column = column, )
+min = Button(root,text="find min",command = min, width=wd)
+min.grid(row = 2, column = column, )
+bser = Button(root, text = "serach",command = ser, width=wd)
+bser.grid(row = 3, column = column, )
+summ = Button(root, text = "find sum", command = sum, width=wd)
+summ.grid(row = 4, column = column,)
+count= Button(root,text="find count",command = count, width=wd)
+count.grid(row = 5, column = column, )
+store = Button(root,text = "store in", command = store, width=wd)
+store.grid(row = 6, column = column, )
+autonum = Button(root,text="AutoNumbring",command = autonumber, width=wd)
+autonum.grid(row = 7, column = column, )
+dark = Button(root, text = "DarkMode",command = darkmode, width=wd)
 dark.grid(row =8, column= column)
 
-en1 = Entry(root)
-en1.grid(row = 9, column = column, padx = 10)
-la = Label(root,text="")
-la.grid(row = 0 ,column = column, padx = 10, ipadx = 10)
+en1 = Entry(root, width=15)
+en1.grid(row = 9, column = column,)
+la = Label(root,text="", width=15)
+la.grid(row = 0 ,column = column)
 
 scrollbar = Scrollbar(root)
 scrollbar.grid(row = 10, column =column, rowspan = 10)
 
-List = Listbox(root, yscrollcommand = scrollbar.set)
+List = Listbox(root, yscrollcommand = scrollbar.set, width=15)
 for i in range(row):
     for j in range(column):
         List.insert(END,"Label")
